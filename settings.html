@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统设置 - 化学学习助手</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            transition: background 0.3s ease;
+        }
+        
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a1a2a 0%, #2d2d3a 100%);
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        body.dark-mode .container {
+            background: #2d2d3a;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        .page-header {
+            display: flex;
+            align-items: center;
+            padding: 20px 30px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            transition: background 0.3s ease;
+        }
+        
+        body.dark-mode .page-header {
+            background: #3d3d4a;
+            border-bottom-color: #4d4d5a;
+        }
+        
+        .back-btn {
+            background: white;
+            border: 1px solid #dee2e6;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            margin-right: 20px;
+            text-decoration: none;
+            color: #2c3e50;
+        }
+        
+        body.dark-mode .back-btn {
+            background: #4d4d5a;
+            border-color: #5d5d6a;
+            color: #e0e0e0;
+        }
+        
+        .back-btn:hover {
+            background: #e9ecef;
+        }
+        
+        body.dark-mode .back-btn:hover {
+            background: #5d5d6a;
+        }
+        
+        .page-title {
+            font-size: 20px;
+            color: #2c3e50;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+        
+        body.dark-mode .page-title {
+            color: #e0e0e0;
+        }
+        
+        .content {
+            padding: 20px 30px;
+        }
+        
+        .settings-section {
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+            transition: color 0.3s ease, border-color 0.3s ease;
+        }
+        
+        body.dark-mode .section-title {
+            color: #e0e0e0;
+            border-bottom-color: #4d4d5a;
+        }
+        
+        .settings-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        body.dark-mode .settings-item {
+            background: #3d3d4a;
+        }
+        
+        .settings-item:hover {
+            background: #e9ecef;
+        }
+        
+        body.dark-mode .settings-item:hover {
+            background: #4d4d5a;
+        }
+        
+        .settings-label {
+            font-weight: 500;
+            color: #2c3e50;
+            font-size: 15px;
+            transition: color 0.3s ease;
+        }
+        
+        body.dark-mode .settings-label {
+            color: #e0e0e0;
+        }
+        
+        .settings-desc {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-top: 3px;
+            transition: color 0.3s ease;
+        }
+        
+        body.dark-mode .settings-desc {
+            color: #a0a0a0;
+        }
+        
+        .settings-info {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+        
+        .toggle-switch {
+            width: 50px;
+            height: 26px;
+            background: #dee2e6;
+            border-radius: 13px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .toggle-switch.active {
+            background: #667eea;
+        }
+        
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s ease;
+        }
+        
+        .toggle-switch.active::after {
+            transform: translateX(24px);
+        }
+        
+        .select-input {
+            padding: 8px 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        body.dark-mode .select-input {
+            background: #4d4d5a;
+            border-color: #5d5d6a;
+            color: #e0e0e0;
+        }
+        
+        .select-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        body.dark-mode .select-input:focus {
+            border-color: #4a90e2;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .action-btn {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .action-btn.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .action-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .action-btn.secondary {
+            background: #f8f9fa;
+            color: #2c3e50;
+            border: 1px solid #dee2e6;
+        }
+        
+        .action-btn.secondary:hover {
+            background: #e9ecef;
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            transition: background 0.3s ease;
+        }
+        
+        body.dark-mode .info-box {
+            background: #2d3d4a;
+            border-left-color: #4a90e2;
+        }
+        
+        .info-title {
+            font-weight: 600;
+            color: #1976d2;
+            margin-bottom: 10px;
+            transition: color 0.3s ease;
+        }
+        
+        body.dark-mode .info-title {
+            color: #64b5f6;
+        }
+        
+        .info-content {
+            font-size: 14px;
+            color: #0d47a1;
+            line-height: 1.6;
+            transition: color 0.3s ease;
+        }
+        
+        body.dark-mode .info-content {
+            color: #81d4fa;
+        }
+        
+        .version-info {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+            color: #7f8c8d;
+            font-size: 13px;
+            transition: border-color 0.3s ease, color 0.3s ease;
+        }
+        
+        body.dark-mode .version-info {
+            border-top-color: #4d4d5a;
+            color: #a0a0a0;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+            
+            .content {
+                padding: 15px 20px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <a href="index.html" class="back-btn">← 返回首页</a>
+            <div class="page-title">系统设置</div>
+        </div>
+        
+        <div class="content">
+            <!-- 显示设置 -->
+            <div class="settings-section">
+                <div class="section-title">显示设置</div>
+                
+                <div class="settings-item">
+                    <div class="settings-info">
+                        <div class="settings-label">显示化合价提示</div>
+                        <div class="settings-desc">在化学式检验时显示化合价信息</div>
+                    </div>
+                    <div class="toggle-switch active" id="showValenceToggle" onclick="toggleSetting('showValence')"></div>
+                </div>
+                
+                <div class="settings-item">
+                    <div class="settings-info">
+                        <div class="settings-label">自动简化化学式</div>
+                        <div class="settings-desc">自动将化学式简化为最简形式</div>
+                    </div>
+                    <div class="toggle-switch active" id="autoSimplifyToggle" onclick="toggleSetting('autoSimplify')"></div>
+                </div>
+                
+                <div class="settings-item">
+                    <div class="settings-info">
+                        <div class="settings-label">显示推荐化合物</div>
+                        <div class="settings-desc">在无法组成化合物时显示推荐</div>
+                    </div>
+                    <div class="toggle-switch active" id="showSuggestionsToggle" onclick="toggleSetting('showSuggestions')"></div>
+                </div>
+                
+                <div class="settings-item">
+                    <div class="settings-info">
+                        <div class="settings-label">深色模式</div>
+                        <div class="settings-desc">使用深色主题保护眼睛</div>
+                    </div>
+                    <div class="toggle-switch" id="darkModeToggle" onclick="toggleSetting('darkMode')"></div>
+                </div>
+            </div>
+            
+            <!-- 功能设置 -->
+            <div class="settings-section">
+                <div class="section-title">功能设置</div>
+                
+                <div class="settings-item">
+                    <div class="settings-info">
+                        <div class="settings-label">默认化学式检验模式</div>
+                        <div class="settings-desc">选择默认的化学式检验界面</div>
+                    </div>
+                    <select class="select-input" id="defaultModeSelect" onchange="saveSetting('defaultMode', this.value)">
+                        <option value="card">卡片模式</option>
+                        <option value="input">快速输入模式</option>
+                    </select>
+                </div>
+                
+                <div class="settings-item">
+                    <div class="settings-info">
+                        <div class="settings-label">元素分类显示</div>
+                        <div class="settings-desc">在化学式检验中按分类显示元素</div>
+                    </div>
+                    <div class="toggle-switch active" id="categoryViewToggle" onclick="toggleSetting('categoryView')"></div>
+                </div>
+                
+                <div class="settings-item">
+                    <div class="settings-info">
+                        <div class="settings-label">快捷键提示</div>
+                        <div class="settings-desc">显示快捷键操作提示</div>
+                    </div>
+                    <div class="toggle-switch active" id="showHotkeysToggle" onclick="toggleSetting('showHotkeys')"></div>
+                </div>
+            </div>
+            
+            <!-- 数据管理 -->
+            <div class="settings-section">
+                <div class="section-title">数据管理</div>
+                
+                <div class="info-box">
+                    <div class="info-title">数据存储说明</div>
+                    <div class="info-content">
+                        所有数据都存储在本地浏览器中，包括：<br>
+                        • 打卡记录<br>
+                        • 学习统计<br>
+                        • 用户设置<br>
+                        <br>
+                        清除数据将删除所有记录，请谨慎操作！
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="action-btn primary" onclick="clearAllData()">清除所有数据</button>
+                </div>
+            </div>
+            
+            <!-- 关于 -->
+            <div class="settings-section">
+                <div class="section-title">关于</div>
+                
+                <div class="info-box">
+                    <div class="info-title">化学学习助手</div>
+                    <div class="info-content">
+                        版本：1.0.0<br>
+                        开发者：化学学习团队<br>
+                        平台：HarmonyOS / Web<br>
+                        功能：化学式检验、方程式配平、学习打卡
+                    </div>
+                </div>
+            </div>
+            
+            <div class="version-info">
+                化学学习助手 v1.0.0 | 鸿蒙应用
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 设置存储键
+        const SETTINGS_KEY = 'chemistry_settings';
+        const CHECKIN_DATA_KEY = 'chemistry_checkin_data';
+        
+        // 默认设置
+        const defaultSettings = {
+            showValence: true,
+            autoSimplify: true,
+            showSuggestions: true,
+            darkMode: false,
+            defaultMode: 'card',
+            categoryView: true,
+            showHotkeys: true
+        };
+
+        // 当前设置
+        let currentSettings = {};
+
+        // 初始化
+        function init() {
+            loadSettings();
+            applySettings();
+        }
+        
+        // 页面加载时应用深色模式
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSettings();
+            applySettings();
+        });
+        
+        // 加载设置
+        function loadSettings() {
+            const savedSettings = localStorage.getItem(SETTINGS_KEY);
+            if (savedSettings) {
+                currentSettings = JSON.parse(savedSettings);
+            } else {
+                currentSettings = {...defaultSettings};
+                saveSettings(currentSettings);
+            }
+        }
+
+        // 保存设置
+        function saveSettings(settings) {
+            localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+            currentSettings = settings;
+        }
+
+        // 应用设置到界面
+        function applySettings() {
+            if (currentSettings.darkMode) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+            
+            const showValenceToggle = document.getElementById('showValenceToggle');
+            showValenceToggle.classList.toggle('active', currentSettings.showValence);
+            
+            const autoSimplifyToggle = document.getElementById('autoSimplifyToggle');
+            autoSimplifyToggle.classList.toggle('active', currentSettings.autoSimplify);
+            
+            const showSuggestionsToggle = document.getElementById('showSuggestionsToggle');
+            showSuggestionsToggle.classList.toggle('active', currentSettings.showSuggestions);
+            
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            darkModeToggle.classList.toggle('active', currentSettings.darkMode);
+            
+            const defaultModeSelect = document.getElementById('defaultModeSelect');
+            defaultModeSelect.value = currentSettings.defaultMode;
+            
+            const categoryViewToggle = document.getElementById('categoryViewToggle');
+            categoryViewToggle.classList.toggle('active', currentSettings.categoryView);
+            
+            const showHotkeysToggle = document.getElementById('showHotkeysToggle');
+            showHotkeysToggle.classList.toggle('active', currentSettings.showHotkeys);
+        }
+
+        // 切换设置
+        function toggleSetting(settingKey) {
+            currentSettings[settingKey] = !currentSettings[settingKey];
+            saveSettings(currentSettings);
+            applySettings();
+        }
+
+        // 保存设置
+        function saveSetting(settingKey, value) {
+            currentSettings[settingKey] = value;
+            saveSettings(currentSettings);
+            applySettings();
+        }
+
+        // 清除所有数据
+        function clearAllData() {
+            if (confirm('确定要清除所有数据吗？此操作不可恢复！')) {
+                localStorage.removeItem(SETTINGS_KEY);
+                localStorage.removeItem(CHECKIN_DATA_KEY);
+                
+                currentSettings = {...defaultSettings};
+                saveSettings(currentSettings);
+                applySettings();
+                
+                alert('数据已清除！');
+            }
+        }
+
+        // 初始化
+        init();
+    </script>
+</body>
+</html>

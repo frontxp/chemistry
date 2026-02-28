@@ -1,0 +1,1781 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>化学式检验 - 化学学习助手</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            transition: background 0.3s ease;
+        }
+        
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a1a2a 0%, #2d2d3a 100%);
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        body.dark-mode .container {
+            background: #2d2d3a;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        .page-header {
+            display: flex;
+            align-items: center;
+            padding: 20px 30px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            transition: background 0.3s ease;
+        }
+        
+        body.dark-mode .page-header {
+            background: #3d3d4a;
+            border-bottom-color: #4d4d5a;
+        }
+        
+        .back-btn {
+            background: white;
+            border: 1px solid #dee2e6;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            margin-right: 20px;
+            text-decoration: none;
+            color: #2c3e50;
+        }
+        
+        body.dark-mode .back-btn {
+            background: #4d4d5a;
+            border-color: #5d5d6a;
+            color: #e0e0e0;
+        }
+        
+        .back-btn:hover {
+            background: #e9ecef;
+        }
+        
+        body.dark-mode .back-btn:hover {
+            background: #5d5d6a;
+        }
+        
+        .page-title {
+            font-size: 20px;
+            color: #2c3e50;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+        
+        body.dark-mode .page-title {
+            color: #e0e0e0;
+        }
+        
+        .mode-switch-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-left: auto;
+        }
+        
+        .mode-switch-btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+        
+        body.dark-mode .mode-switch-btn {
+            background: #4a90e2;
+        }
+        
+        body.dark-mode .mode-switch-btn:hover {
+            background: #3b7bc4;
+        }
+        
+        .content {
+            padding: 20px 30px;
+        }
+        
+        /* 快速输入模式样式 */
+        .quick-input-section {
+            display: none;
+        }
+        
+        .quick-input-section.active {
+            display: block;
+        }
+        
+        .card-mode-section {
+            display: block;
+        }
+        
+        .card-mode-section.hidden {
+            display: none;
+        }
+        
+        .formula-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .formula-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        body.dark-mode .formula-input {
+            background: #3d3d4a;
+            border-color: #4d4d5a;
+            color: #e0e0e0;
+        }
+        
+        body.dark-mode .formula-input:focus {
+            border-color: #4a90e2;
+        }
+        
+        .input-hint {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #7f8c8d;
+            transition: color 0.3s ease;
+        }
+        
+        body.dark-mode .input-hint {
+            color: #a0a0a0;
+        }
+        
+        /* 元素分类样式 */
+        .category-section {
+            margin-bottom: 20px;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: border-color 0.3s ease;
+        }
+        
+        body.dark-mode .category-section {
+            border-color: #4d4d5a;
+        }
+        
+        .category-header {
+            background: #f8f9fa;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        body.dark-mode .category-header {
+            background: #3d3d4a;
+        }
+        
+        .category-header:hover {
+            background: #e9ecef;
+        }
+        
+        body.dark-mode .category-header:hover {
+            background: #4d4d5a;
+        }
+        
+        .category-title {
+            font-weight: 600;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: color 0.3s ease;
+        }
+        
+        body.dark-mode .category-title {
+            color: #e0e0e0;
+        }
+        
+        .category-icon {
+            font-size: 20px;
+        }
+        
+        .toggle-icon {
+            font-size: 20px;
+            transition: transform 0.3s ease;
+        }
+        
+        .category-section.collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
+        
+        .category-content {
+            padding: 15px;
+            display: block;
+        }
+        
+        .category-section.collapsed .category-content {
+            display: none;
+        }
+        
+        .element-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
+        }
+        
+        .element-card {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        body.dark-mode .element-card {
+            background: #3d3d4a;
+            border-color: #4d4d5a;
+        }
+        
+        .element-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.2);
+        }
+        
+        .element-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .element-name {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+        
+        body.dark-mode .element-name {
+            color: #e0e0e0;
+        }
+        
+        .element-symbol {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .element-control {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .quantity-display {
+            font-size: 16px;
+            font-weight: bold;
+            color: #2c3e50;
+            min-width: 25px;
+            text-align: center;
+            transition: color 0.3s ease;
+        }
+        
+        body.dark-mode .quantity-display {
+            color: #e0e0e0;
+        }
+        
+        .control-buttons {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .control-btn {
+            width: 28px;
+            height: 28px;
+            border:1px solid #dee2e6;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+        
+        body.dark-mode .control-btn {
+            background: #4d4d5a;
+            border-color: #5d5d6a;
+            color: #e0e0e0;
+        }
+        
+        .control-btn:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        /* 预览区域 */
+        .preview-section {
+            background: #e3f2fd;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            border-left: 4px solid #2196f3;
+            transition: background 0.3s ease;
+        }
+        
+        body.dark-mode .preview-section {
+            background: #2d3d4a;
+            border-left-color: #4a90e2;
+        }
+        
+        .preview-title {
+            font-size: 14px;
+            color: #1976d2;
+            font-weight: 600;
+            margin-bottom: 10px;
+            transition: color 0.3s ease;
+        }
+        
+        body.dark-mode .preview-title {
+            color: #64b5f6;
+        }
+        
+        .preview-formula {
+            font-size: 18px;
+            font-weight: bold;
+            color: #0d47a1;
+            font-family: 'Courier New', monospace;
+            transition: color 0.3s ease;
+        }
+        
+        body.dark-mode .preview-formula {
+            color: #90caf9;
+        }
+        
+        .preview-details {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #1565c0;
+            transition: color 0.3s ease;
+        }
+        
+        body.dark-mode .preview-details {
+            color: #81d4fa;
+        }
+        
+        /* 按钮样式 */
+        .action-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .action-btn:active {
+            transform: translateY(0);
+        }
+        
+        /* 结果显示 */
+        .result-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 4px solid #28a745;
+            transition: background 0.3s ease;
+        }
+        
+        body.dark-mode .result-section {
+            background: #2d3d4a;
+            border-left-color: #4caf50;
+        }
+        
+        .result-section.error {
+            border-left-color: #dc3545;
+        }
+        
+        body.dark-mode .result-section.error {
+            border-left-color: #ef5350;
+        }
+        
+        .result-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .result-success {
+            color: #28a745;
+        }
+        
+        .result-error {
+            color: #dc3545;
+        }
+        
+        .result-content {
+            line-height: 1.6;
+        }
+        
+        .formula-display {
+            background: white;
+            padding: 12px 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            margin: 10px 0;
+            border: 1px solid #dee2e6;
+        }
+        
+        .valence-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 10px 0;
+        }
+        
+        .valence-item {
+            background: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 13px;
+            border: 1px solid #dee2e6;
+        }
+        
+        @media (max-width: 600px) {
+            .element-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+            
+            .content {
+                padding: 15px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <a href="index.html" class="back-btn">← 返回首页</a>
+            <div class="page-title">化学式检验</div>
+            <button class="mode-switch-btn" onclick="switchMode()" id="modeSwitchBtn">切换到快速输入</button>
+        </div>
+        
+        <div class="content">
+            <!-- 快速输入模式 -->
+            <div class="quick-input-section" id="quickInputSection">
+                <div class="input-section">
+                    <label class="input-label">输入化学式</label>
+                    <input type="text" class="formula-input" id="formulaInput" placeholder="输入化学式，如：H2O, NaCl, CO2">
+                    <div class="input-hint">
+                        提示：支持常见化学式输入，系统会自动识别元素和根
+                    </div>
+                </div>
+                
+                <button class="action-btn" onclick="validateQuickInput()">开始检验</button>
+            </div>
+            
+            <!-- 卡片模式 -->
+            <div class="card-mode-section" id="cardModeSection">
+            <!-- 常见气体分类 -->
+            <div class="category-section" id="gasCategory">
+                <div class="category-header" onclick="toggleCategory('gasCategory')">
+                    <div class="category-title">
+                        <span class="category-icon">💨</span>
+                        常见气体（优先显示）
+                    </div>
+                    <div class="toggle-icon">▼</div>
+                </div>
+                <div class="category-content">
+                    <div class="element-grid">
+                        <div class="element-card">
+                            <div class="element-info">
+                                <span class="element-name">氢</span>
+                                <span class="element-symbol">H</span>
+                            </div>
+                            <div class="element-control">
+                                <span class="quantity-display" id="H-count">0</span>
+                                <div class="control-buttons">
+                                    <button class="control-btn" onclick="updateElement('H', -1)">−</button>
+                                    <button class="control-btn" onclick="updateElement('H', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="element-card">
+                            <div class="element-info">
+                                <span class="element-name">氧</span>
+                                <span class="element-symbol">O</span>
+                            </div>
+                            <div class="element-control">
+                                <span class="quantity-display" id="O-count">0</span>
+                                <div class="control-buttons">
+                                    <button class="control-btn" onclick="updateElement('O', -1)">−</button>
+                                    <button class="control-btn" onclick="updateElement('O', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="element-card">
+                            <div class="element-info">
+                                <span class="element-name">氮</span>
+                                <span class="element-symbol">N</span>
+                            </div>
+                            <div class="element-control">
+                                <span class="quantity-display" id="N-count">0</span>
+                                <div class="control-buttons">
+                                    <button class="control-btn" onclick="updateElement('N', -1)">−</button>
+                                    <button class="control-btn" onclick="updateElement('N', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="element-card">
+                            <div class="element-info">
+                                <span class="element-name">氯</span>
+                                <span class="element-symbol">Cl</span>
+                            </div>
+                            <div class="element-control">
+                                <span class="quantity-display" id="Cl-count">0</span>
+                                <div class="control-buttons">
+                                    <button class="control-btn" onclick="updateElement('Cl', -1)">−</button>
+                                    <button class="control-btn" onclick="updateElement('Cl', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 一价元素分类 -->
+            <div class="category-section" id="valence1Category">
+                <div class="category-header" onclick="toggleCategory('valence1Category')">
+                    <div class="category-title">
+                        <span class="category-icon">1️⃣</span>
+                        一价元素（氢氯钾钠银）
+                    </div>
+                    <div class="toggle-icon">▼</div>
+                </div>
+                <div class="category-content">
+                    <div class="element-grid">
+                        <div class="element-card">
+                            <div class="element-info">
+                                <span class="element-name">钾</span>
+                                <span class="element-symbol">K</span>
+                            </div>
+                            <div class="element-control">
+                                <span class="quantity-display" id="K-count">0</span>
+                                <div class="control-buttons">
+                                    <button class="control-btn" onclick="updateElement('K', -1)">−</button>
+                                    <button class="control-btn" onclick="updateElement('K', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="element-card">
+                            <div class="element-info">
+                                <span class="element-name">钠</span>
+                                <span class="element-symbol">Na</span>
+                            </div>
+                            <div class="element-control">
+                                <span class="quantity-display" id="Na-count">0</span>
+                                <div class="control-buttons">
+                                    <button class="control-btn" onclick="updateElement('Na', -1)">−</button>
+                                    <button class="control-btn" onclick="updateElement('Na', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="element-card">
+                            <div class="element-info">
+                                <span class="element-name">银</span>
+                                <span class="element-symbol">Ag</span>
+                            </div>
+                            <div class="element-control">
+                                <span class="quantity-display" id="Ag-count">0</span>
+                                <div class="control-buttons">
+                                    <button class="control-btn" onclick="updateElement('Ag', -1)">−</button>
+                                    <button class="control-btn" onclick="updateElement('Ag', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 二价元素分类 -->
+            <div class="category-section" id="valence2Category">
+                <div class="category-header" onclick="toggleCategory('valence2Category')">
+                    <div class="category-title">
+                        <span class="category-icon">2️⃣</span>
+                        二价元素（氧钙钡镁锌铜汞）
+                    </div>
+                    <div class="toggle-icon">▼</div>
+                </div>
+                <div class="category-content">
+                    <div class="element-grid">
+                        <div class="element-card">
+                            <div class="element-info">
+                                <span class="element-name">钙</span>
+                                <span class="element-symbol">Ca</span>
+                            </div>
+                            <div class="element-control">
+                                <span class="quantity-display" id="Ca-count">0</span>
+                                <div class="control-buttons">
+                                    <button class="control-btn" onclick="updateElement('Ca', -1)">−</button>
+                                    <button class="control-btn" onclick="updateElement('Ca', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="element-card">
+                            <div class="element-info">
+                                <span class="element-name">镁</span>
+                                <span class="element-symbol">Mg</span>
+                            </div>
+                            <div class="element-control">
+                                <span class="quantity-display" id="Mg-count">0</span>
+                                <div class="control-buttons">
+                                    <button class="control-btn" onclick="updateElement('Mg', -1)">−</button>
+                                    <button class="control-btn" onclick="updateElement('Mg', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="element-card">
+                            <div class="element-info">
+                                <span class="element-name">锌</span>
+                                <span class="element-symbol">Zn</span>
+                            </div>
+                            <div class="element-control">
+                                <span class="quantity-display" id="Zn-count">0</span>
+                                <div class="control-buttons">
+                                    <button class="control-btn" onclick="updateElement('Zn', -1)">−</button>
+                                    <button class="control-btn" onclick="updateElement('Zn', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="element-card">
+                            <div class="element-info">
+                                <span class="element-name">钡</span>
+                                <span class="element-symbol">Ba</span>
+                            </div>
+                            <div class="element-control">
+                                <span class="quantity-display" id="Ba-count">0</span>
+                                <div class="control-buttons">
+                                    <button class="control-btn" onclick="updateElement('Ba', -1)">−</button>
+                                    <button class="control-btn" onclick="updateElement('Ba', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="element-card">
+                            <div class="element-info">
+                                <span class="element-name">铜</span>
+                                <span class="element-symbol">Cu</span>
+                            </div>
+                            <div class="element-control">
+                                <span class="quantity-display" id="Cu-count">0</span>
+                                <div class="control-buttons">
+                                    <button class="control-btn" onclick="updateElement('Cu', -1)">−</button>
+                                    <button class="control-btn" onclick="updateElement('Cu', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="element-card">
+                            <div class="element-info">
+                                <span class="element-name">汞</span>
+                                <span class="element-symbol">Hg</span>
+                            </div>
+                            <div class="element-control">
+                                <span class="quantity-display" id="Hg-count">0</span>
+                                <div class="control-buttons">
+                                    <button class="control-btn" onclick="updateElement('Hg', -1)">−</button>
+                                    <button class="control-btn" onclick="updateElement('Hg', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 其他常见元素分类 -->
+            <div class="category-section" id="otherCommonCategory">
+                <div class="category-header" onclick="toggleCategory('otherCommonCategory')">
+                    <div class="category-title">
+                        <span class="category-icon">🔬</span>
+                        其他常见元素（三铝四硅五氮磷二三铁二四碳二四六硫）
+                    </div>
+                    <div class="toggle-icon">▼</div>
+                </div>
+                <div class="category-content">
+                    <div class="element-grid">
+                        <div class="element-card">
+                            <div class="element-info">
+                                <span class="element-name">铝</span>
+                                <span class="element-symbol">Al</span>
+                            </div>
+                            <div class="element-control">
+                                <span class="quantity-display" id="Al-count">0</span>
+                                <div class="control-buttons">
+                                    <button class="control-btn" onclick="updateElement('Al', -1)">−</button>
+                                    <button class="control-btn" onclick="updateElement('Al', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="element-card">
+                            <div class="element-info">
+                                <span class="element-name">硅</span>
+                                <span class="element-symbol">Si</span>
+                            </div>
+                            <div class="element-control">
+                                <span class="quantity-display" id="Si-count">0</span>
+                                <div class="control-buttons">
+                                    <button class="control-btn" onclick="updateElement('Si', -1)">−</button>
+                                    <button class="control-btn" onclick="updateElement('Si', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="element-card">
+                            <div class="element-info">
+                                <span class="element-name">磷</span>
+                                <span class="element-symbol">P</span>
+                            </div>
+                            <div class="element-control">
+                                <span class="quantity-display" id="P-count">0</span>
+                                <div class="control-buttons">
+                                    <button class="control-btn" onclick="updateElement('P', -1)">−</button>
+                                    <button class="control-btn" onclick="updateElement('P', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="element-card">
+                            <div class="element-info">
+                                <span class="element-name">铁</span>
+                                <span class="element-symbol">Fe</span>
+                            </div>
+                            <div class="element-control">
+                                <span class="quantity-display" id="Fe-count">0</span>
+                                <div class="control-buttons">
+                                    <button class="control-btn" onclick="updateElement('Fe', -1)">−</button>
+                                    <button class="control-btn" onclick="updateElement('Fe', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="element-card">
+                            <div class="element-info">
+                                <span class="element-name">碳</span>
+                                <span class="element-symbol">C</span>
+                            </div>
+                            <div class="element-control">
+                                <span class="quantity-display" id="C-count">0</span>
+                                <div class="control-buttons">
+                                    <button class="control-btn" onclick="updateElement('C', -1)">−</button>
+                                    <button class="control-btn" onclick="updateElement('C', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="element-card">
+                            <div class="element-info">
+                                <span class="element-name">硫</span>
+                                <span class="element-symbol">S</span>
+                            </div>
+                            <div class="element-control">
+                                <span class="quantity-display" id="S-count">0</span>
+                                <div class="control-buttons">
+                                    <button class="control-btn" onclick="updateElement('S', -1)">−</button>
+                                    <button class="control-btn" onclick="updateElement('S', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 常见根分类 -->
+            <div class="category-section" id="radicalCategory">
+                <div class="category-header" onclick="toggleCategory('radicalCategory')">
+                    <div class="category-title">
+                        <span class="category-icon">🧪</span>
+                        常见根（优先匹配）
+                    </div>
+                    <div class="toggle-icon">▼</div>
+                </div>
+                <div class="category-content">
+                    <div class="element-grid">
+                        <div class="element-card">
+                            <div class="element-info">
+                                <span class="element-name">氢氧根</span>
+                                <span class="element-symbol">OH</span>
+                            </div>
+                            <div class="element-control">
+                                <span class="quantity-display" id="OH-count">0</span>
+                                <div class="control-buttons">
+                                    <button class="control-btn" onclick="updateElement('OH', -1)">−</button>
+                                    <button class="control-btn" onclick="updateElement('OH', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="element-card">
+                            <div class="element-info">
+                                <span class="element-name">硝酸根</span>
+                                <span class="element-symbol">NO₃</span>
+                            </div>
+                            <div class="element-control">
+                                <span class="quantity-display" id="NO3-count">0</span>
+                                <div class="control-buttons">
+                                    <button class="control-btn" onclick="updateElement('NO3', -1)">−</button>
+                                    <button class="control-btn" onclick="updateElement('NO3', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="element-card">
+                            <div class="element-info">
+                                <span class="element-name">硫酸根</span>
+                                <span class="element-symbol">SO₄</span>
+                            </div>
+                            <div class="element-control">
+                                <span class="quantity-display" id="SO4-count">0</span>
+                                <div class="control-buttons">
+                                    <button class="control-btn" onclick="updateElement('SO4', -1)">−</button>
+                                    <button class="control-btn" onclick="updateElement('SO4', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="element-card">
+                            <div class="element-info">
+                                <span class="element-name">碳酸根</span>
+                                <span class="element-symbol">CO₃</span>
+                            </div>
+                            <div class="element-control">
+                                <span class="quantity-display" id="CO3-count">0</span>
+                                <div class="control-buttons">
+                                    <button class="control-btn" onclick="updateElement('CO3', -1)">−</button>
+                                    <button class="control-btn" onclick="updateElement('CO3', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="element-card">
+                            <div class="element-info">
+                                <span class="element-name">铵根</span>
+                                <span class="element-symbol">NH₄</span>
+                            </div>
+                            <div class="element-control">
+                                <span class="quantity-display" id="NH4-count">0</span>
+                                <div class="control-buttons">
+                                    <button class="control-btn" onclick="updateElement('NH4', -1)">−</button>
+                                    <button class="control-btn" onclick="updateElement('NH4', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 不常见元素分类 -->
+            <div class="category-section" id="rareCategory">
+                <div class="category-header" onclick="toggleCategory('rareCategory')">
+                    <div class="category-title">
+                        <span class="category-icon">⚗️</span>
+                        不常见元素（较少使用）
+                    </div>
+                    <div class="toggle-icon">▼</div>
+                </div>
+                <div class="category-content">
+                    <div class="element-grid">
+                        <div class="element-card">
+                            <div class="element-info">
+                                <span class="element-name">锰</span>
+                                <span class="element-symbol">Mn</span>
+                            </div>
+                            <div class="element-control">
+                                <span class="quantity-display" id="Mn-count">0</span>
+                                <div class="control-buttons">
+                                    <button class="control-btn" onclick="updateElement('Mn', -1)">−</button>
+                                    <button class="control-btn" onclick="updateElement('Mn', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="element-card">
+                            <div class="element-info">
+                                <span class="element-name">溴</span>
+                                <span class="element-symbol">Br</span>
+                            </div>
+                            <div class="element-control">
+                                <span class="quantity-display" id="Br-count">0</span>
+                                <div class="control-buttons">
+                                    <button class="control-btn" onclick="updateElement('Br', -1)">−</button>
+                                    <button class="control-btn" onclick="updateElement('Br', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="element-card">
+                            <div class="element-info">
+                                <span class="element-name">碘</span>
+                                <span class="element-symbol">I</span>
+                            </div>
+                            <div class="element-control">
+                                <span class="quantity-display" id="I-count">0</span>
+                                <div class="control-buttons">
+                                    <button class="control-btn" onclick="updateElement('I', -1)">−</button>
+                                    <button class="control-btn" onclick="updateElement('I', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="element-card">
+                            <div class="element-info">
+                                <span class="element-name">氟</span>
+                                <span class="element-symbol">F</span>
+                            </div>
+                            <div class="element-control">
+                                <span class="quantity-display" id="F-count">0</span>
+                                <div class="control-buttons">
+                                    <button class="control-btn" onclick="updateElement('F', -1)">−</button>
+                                    <button class="control-btn" onclick="updateElement('F', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="element-card">
+                            <div class="element-info">
+                                <span class="element-name">金</span>
+                                <span class="element-symbol">Au</span>
+                            </div>
+                            <div class="element-control">
+                                <span class="quantity-display" id="Au-count">0</span>
+                                <div class="control-buttons">
+                                    <button class="control-btn" onclick="updateElement('Au', -1)">−</button>
+                                    <button class="control-btn" onclick="updateElement('Au', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="element-card">
+                            <div class="element-info">
+                                <span class="element-name">铂</span>
+                                <span class="element-symbol">Pt</span>
+                            </div>
+                            <div class="element-control">
+                                <span class="quantity-display" id="Pt-count">0</span>
+                                <div class="control-buttons">
+                                    <button class="control-btn" onclick="updateElement('Pt', -1)">−</button>
+                                    <button class="control-btn" onclick="updateElement('Pt', 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 实时预览 -->
+            <div class="preview-section" id="previewSection" style="display: none;">
+                <div class="preview-title">实时预览</div>
+                <div class="preview-formula" id="previewFormula"></div>
+                <div class="preview-details" id="previewDetails"></div>
+            </div>
+            
+            <!-- 检验按钮 -->
+            <button class="action-btn" onclick="validateFormula()">开始检验</button>
+            
+            <!-- 结果显示 -->
+            <div class="result-section" id="resultSection" style="display: none;">
+                <div class="result-title" id="resultTitle"></div>
+                <div class="result-content" id="resultContent"></div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 设置存储键
+        const SETTINGS_KEY = 'chemistry_settings';
+        
+        // 当前模式
+        let currentMode = 'card';
+        
+        // 加载设置
+        function loadSettings() {
+            const savedSettings = localStorage.getItem(SETTINGS_KEY);
+            if (savedSettings) {
+                const settings = JSON.parse(savedSettings);
+                currentMode = settings.defaultMode || 'card';
+                updateModeButton();
+            }
+        }
+        
+        // 切换模式
+        function switchMode() {
+            currentMode = currentMode === 'card' ? 'input' : 'card';
+            saveMode();
+            applyMode();
+        }
+        
+        // 保存模式设置
+        function saveMode() {
+            const savedSettings = localStorage.getItem(SETTINGS_KEY);
+            const settings = savedSettings ? JSON.parse(savedSettings) : {};
+            settings.defaultMode = currentMode;
+            localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+        }
+        
+        // 更新模式按钮文本
+        function updateModeButton() {
+            const btn = document.getElementById('modeSwitchBtn');
+            if (btn) {
+                btn.textContent = currentMode === 'card' ? '切换到快速输入' : '切换到卡片模式';
+            }
+        }
+        
+        // 应用深色模式
+        function applyDarkMode() {
+            const savedSettings = localStorage.getItem(SETTINGS_KEY);
+            if (savedSettings) {
+                const settings = JSON.parse(savedSettings);
+                if (settings.darkMode) {
+                    document.body.classList.add('dark-mode');
+                }
+            }
+        }
+        
+        // 元素数据库
+        const elementsData = {
+            'H': { name: '氢', symbol: 'H', valences: [1], electronegativity: 2.20 },
+            'O': { name: '氧', symbol: 'O', valences: [-2], electronegativity: 3.44 },
+            'C': { name: '碳', symbol: 'C', valences: [4, 2, -4], electronegativity: 2.55 },
+            'N': { name: '氮', symbol: 'N', valences: [-3, 1, 2, 3, 4, 5], electronegativity: 3.04 },
+            'Na': { name: '钠', symbol: 'Na', valences: [1], electronegativity: 0.93 },
+            'K': { name: '钾', symbol: 'K', valences: [1], electronegativity: 0.82 },
+            'Ca': { name: '钙', symbol: 'Ca', valences: [2], electronegativity: 1.00 },
+            'Mg': { name: '镁', symbol: 'Mg', valences: [2], electronegativity: 1.31 },
+            'Cl': { name: '氯', symbol: 'Cl', valences: [-1, 1, 3, 5, 7], electronegativity: 3.16 },
+            'S': { name: '硫', symbol: 'S', valences: [-2, 4, 6], electronegativity: 2.58 },
+            'P': { name: '磷', symbol: 'P', valences: [-3, 3, 5], electronegativity: 2.19 },
+            'Ag': { name: '银', symbol: 'Ag', valences: [1], electronegativity: 1.93 },
+            'Zn': { name: '锌', symbol: 'Zn', valences: [2], electronegativity: 1.65 },
+            'Ba': { name: '钡', symbol: 'Ba', valences: [2], electronegativity: 0.89 },
+            'Cu': { name: '铜', symbol: 'Cu', valences: [1, 2], electronegativity: 1.90 },
+            'Hg': { name: '汞', symbol: 'Hg', valences: [1, 2], electronegativity: 2.00 },
+            'Al': { name: '铝', symbol: 'Al', valences: [3], electronegativity: 1.61 },
+            'Si': { name: '硅', symbol: 'Si', valences: [4], electronegativity: 1.90 },
+            'Fe': { name: '铁', symbol: 'Fe', valences: [2, 3], electronegativity: 1.83 },
+            'Mn': { name: '锰', symbol: 'Mn', valences: [2, 3, 4, 6, 7], electronegativity: 1.55 },
+            'Br': { name: '溴', symbol: 'Br', valences: [-1, 1, 3, 5, 7], electronegativity: 2.96 },
+            'I': { name: '碘', symbol: 'I', valences: [-1, 1, 3, 5, 7], electronegativity: 2.66 },
+            'F': { name: '氟', symbol: 'F', valences: [-1], electronegativity: 3.98 },
+            'Au': { name: '金', symbol: 'Au', valences: [1, 3], electronegativity: 2.54 },
+            'Pt': { name: '铂', symbol: 'Pt', valences: [2, 4], electronegativity: 2.28 },
+            'OH': { name: '氢氧根', symbol: 'OH', valences: [-1], electronegativity: 3.44 },
+            'NO3': { name: '硝酸根', symbol: 'NO₃', valences: [-1], electronegativity: 3.44 },
+            'SO4': { name: '硫酸根', symbol: 'SO₄', valences: [-2], electronegativity: 3.44 },
+            'CO3': { name: '碳酸根', symbol: 'CO₃', valences: [-2], electronegativity: 3.44 },
+            'NH4': { name: '铵根', symbol: 'NH₄', valences: [1], electronegativity: 2.20 }
+        };
+
+        // 常见化合物库
+        const commonCompounds = {
+            'H₂O': { name: '水', formula: 'H₂O', valences: { H: 1, O: -2 } },
+            'CO₂': { name: '二氧化碳', formula: 'CO₂', valences: { C: 4, O: -2 } },
+            'CO': { name: '一氧化碳', formula: 'CO', valences: { C: 2, O: -2 } },
+            'NaCl': { name: '氯化钠', formula: 'NaCl', valences: { Na: 1, Cl: -1 } },
+            'HCl': { name: '盐酸', formula: 'HCl', valences: { H: 1, Cl: -1 } },
+            'NH₃': { name: '氨', formula: 'NH₃', valences: { N: -3, H: 1 } },
+            'CH₄': { name: '甲烷', formula: 'CH₄', valences: { C: -4, H: 1 } },
+            'CaCO₃': { name: '碳酸钙', formula: 'CaCO₃', valences: { Ca: 2, C: 4, O: -2 } },
+            'H₂SO₄': { name: '硫酸', formula: 'H₂SO₄', valences: { H: 1, S: 6, O: -2 } },
+            'NaOH': { name: '氢氧化钠', formula: 'NaOH', valences: { Na: 1, O: -2, H: 1 } },
+            'Na₂CO₃': { name: '碳酸钠', formula: 'Na₂CO₃', valences: { Na: 1, C: 4, O: -2 } },
+            'H₂O₂': { name: '过氧化氢', formula: 'H₂O₂', valences: { H: 1, O: -1 } },
+            'SO₂': { name: '二氧化硫', formula: 'SO₂', valences: { S: 4, O: -2 } },
+            'SO₃': { name: '三氧化硫', formula: 'SO₃', valences: { S: 6, O: -2 } },
+            'Na₂O': { name: '氧化钠', formula: 'Na₂O', valences: { Na: 1, O: -2 } },
+            'CaCl₂': { name: '氯化钙', formula: 'CaCl₂', valences: { Ca: 2, Cl: -1 } },
+            'Na₂SO₄': { name: '硫酸钠', formula: 'Na₂SO₄', valences: { Na: 1, S: 6, O: -2 } },
+            'H₂CO₃': { name: '碳酸', formula: 'H₂CO₃', valences: { H: 1, C: 4, O: -2 } },
+            'NH₄Cl': { name: '氯化铵', formula: 'NH₄Cl', valences: { NH4: 1, Cl: -1 } },
+            'NH₄NO₃': { name: '硝酸铵', formula: 'NH₄NO₃', valences: { NH4: 1, NO3: -1 } },
+            '(NH₄)₂SO₄': { name: '硫酸铵', formula: '(NH₄)₂SO₄', valences: { NH4: 1, SO4: -2 } }
+        };
+
+        // 当前选择的元素
+        let selectedElements = {};
+
+        // 初始化
+        function init() {
+            loadSettings();
+            applyDarkMode();
+            applyMode();
+            Object.keys(elementsData).forEach(element => {
+                selectedElements[element] = 0;
+            });
+            updatePreview();
+        }
+        
+        // 应用模式设置
+        function applyMode() {
+            const quickInputSection = document.getElementById('quickInputSection');
+            const cardModeSection = document.getElementById('cardModeSection');
+            
+            if (currentMode === 'input') {
+                quickInputSection.classList.add('active');
+                cardModeSection.classList.add('hidden');
+            } else {
+                quickInputSection.classList.remove('active');
+                cardModeSection.classList.remove('hidden');
+            }
+            updateModeButton();
+        }
+
+        // 分类收起/释放
+        function toggleCategory(categoryId) {
+            const category = document.getElementById(categoryId);
+            category.classList.toggle('collapsed');
+        }
+
+        // 更新元素数量
+        function updateElement(element, delta) {
+            const newCount = selectedElements[element] + delta;
+            if (newCount >= 0 && newCount <= 99) {
+                selectedElements[element] = newCount;
+                const countElement = document.getElementById(element + '-count');
+                if (countElement) {
+                    countElement.textContent = newCount;
+                }
+                updatePreview();
+            }
+        }
+
+        // 更新预览（按化学式书写规范显示）
+        function updatePreview() {
+            const elements = {};
+            Object.entries(selectedElements).forEach(([element, count]) => {
+                if (count > 0) elements[element] = count;
+            });
+
+            if (Object.keys(elements).length === 0) {
+                document.getElementById('previewSection').style.display = 'none';
+                return;
+            }
+
+            document.getElementById('previewSection').style.display = 'block';
+            
+            const formula = generateFormula(elements);
+            
+            let details = '';
+            Object.entries(elements).forEach(([element, count]) => {
+                details += `${elementsData[element].name}: ${count} `;
+            });
+            
+            document.getElementById('previewFormula').textContent = formula;
+            document.getElementById('previewDetails').textContent = details.trim();
+        }
+
+        // 数字转下标
+        Number.prototype.toSubscript = function() {
+            const subscripts = {
+                '0': '₀', '1': '₁', '2': '₂', '3': '₃', '4': '₄',
+                '5': '₅', '6': '₆', '7': '₇', '8': '₈', '9': '₉'
+            };
+            return this.toString().split('').map(digit => subscripts[digit] || digit).join('');
+        };
+
+        // 验证化学式
+        function validateFormula() {
+            const elements = {};
+            Object.entries(selectedElements).forEach(([element, count]) => {
+                if (count > 0) elements[element] = count;
+            });
+            
+            if (Object.keys(elements).length === 0) {
+                showResult(false, '请至少选择一个元素！');
+                return;
+            }
+
+            const formula = generateFormula(elements);
+            const result = validateCompound(elements, formula);
+            showResult(result.success, result.message, result.details);
+        }
+        
+        // 快速输入模式验证
+        function validateQuickInput() {
+            const formulaInput = document.getElementById('formulaInput');
+            const formula = formulaInput.value.trim();
+            
+            if (!formula) {
+                showResult(false, '请输入化学式！');
+                return;
+            }
+            
+            const elements = parseFormulaInput(formula);
+            
+            if (Object.keys(elements).length === 0) {
+                showResult(false, '无法识别化学式，请检查输入！');
+                return;
+            }
+            
+            const result = validateCompound(elements, formula);
+            showResult(result.success, result.message, result.details);
+        }
+        
+        // 解析快速输入的化学式
+        function parseFormulaInput(formula) {
+            const elements = {};
+            
+            const regex = /([A-Z][a-z]*)(\d*)/g;
+            let match;
+            
+            while ((match = regex.exec(formula)) !== null) {
+                const element = match[1];
+                const count = match[2] ? parseInt(match[2]) : 1;
+                elements[element] = (elements[element] || 0) + count;
+            }
+            
+            return elements;
+        }
+
+        // 生成化学式（按化学式书写规范）
+        function generateFormula(elements) {
+            const elementEntries = Object.entries(elements).filter(([_, count]) => count > 0);
+            
+            if (elementEntries.length === 0) return '';
+            
+            // 特殊情况：NH₃（氨）
+            if (elementEntries.length === 2 && 
+                elementEntries.some(([e, c]) => e === 'N' && c === 1) &&
+                elementEntries.some(([e, c]) => e === 'H' && c === 3)) {
+                return 'NH₃';
+            }
+            
+            // 特殊情况：(NH₄)₂SO₄（硫酸铵）
+            if (elementEntries.length === 2 && 
+                elementEntries.some(([e, c]) => e === 'NH4' && c === 2) &&
+                elementEntries.some(([e, c]) => e === 'SO4' && c === 1)) {
+                return '(NH₄)₂SO₄';
+            }
+            
+            // 特殊情况：NH₄Cl（氯化铵）
+            if (elementEntries.length === 2 && 
+                elementEntries.some(([e, c]) => e === 'NH4' && c === 1) &&
+                elementEntries.some(([e, c]) => e === 'Cl' && c === 1)) {
+                return 'NH₄Cl';
+            }
+            
+            // 特殊情况：NH₄NO₃（硝酸铵）
+            if (elementEntries.length === 2 && 
+                elementEntries.some(([e, c]) => e === 'NH4' && c === 1) &&
+                elementEntries.some(([e, c]) => e === 'NO3' && c === 1)) {
+                return 'NH₄NO₃';
+            }
+            
+            // 特殊情况：(NH₄)₂CO₃（碳酸铵）
+            if (elementEntries.length === 2 && 
+                elementEntries.some(([e, c]) => e === 'NH4' && c === 2) &&
+                elementEntries.some(([e, c]) => e === 'CO3' && c === 1)) {
+                return '(NH₄)₂CO₃';
+            }
+            
+            // 铵根数量大于1时需要加括号
+            const nh4Entry = elementEntries.find(([e, _]) => e === 'NH4');
+            if (nh4Entry && nh4Entry[1] > 1) {
+                const nh4Count = nh4Entry[1];
+                const otherElements = elementEntries.filter(([e, _]) => e !== 'NH4');
+                
+                if (otherElements.length > 0) {
+                    let formula = `(NH₄)${nh4Count.toSubscript()}`;
+                    otherElements.forEach(([element, count]) => {
+                        const symbol = elementsData[element].symbol;
+                        if (count === 1) {
+                            formula += symbol;
+                        } else {
+                            formula += symbol + count.toSubscript();
+                        }
+                    });
+                    return formula;
+                }
+            }
+            
+            // 按照化学式书写规范排序：
+            // 1. 金属在前，非金属在后
+            // 2. 正价在前，负价在后
+            // 3. 氢化物例外：H通常在前（除了NH₃等特殊情况）
+            const sortedElements = elementEntries.sort(([elem1, count1], [elem2, count2]) => {
+                const data1 = elementsData[elem1];
+                const data2 = elementsData[elem2];
+                
+                const metals = ['Na', 'K', 'Ca', 'Mg', 'Ag', 'Zn', 'Ba', 'Cu', 'Hg', 'Al', 'Fe', 'Mn', 'Au', 'Pt'];
+                const isMetal1 = metals.includes(elem1);
+                const isMetal2 = metals.includes(elem2);
+                if (isMetal1 && !isMetal2) return -1;
+                if (!isMetal1 && isMetal2) return 1;
+                
+                if (data1.electronegativity !== data2.electronegativity) {
+                    return data1.electronegativity - data2.electronegativity;
+                }
+                
+                return elem1.localeCompare(elem2);
+            });
+            
+            let formula = '';
+            sortedElements.forEach(([element, count]) => {
+                const symbol = elementsData[element].symbol;
+                
+                if (count === 1) {
+                    formula += symbol;
+                } else {
+                    formula += symbol + count.toSubscript();
+                }
+            });
+            
+            return formula;
+        }
+
+        // 验证化合物
+        function validateCompound(elements, formula) {
+            // 检查常见化合物库
+            const compoundKey = Object.keys(commonCompounds).find(key => {
+                const compound = commonCompounds[key];
+                return compound.formula === formula;
+            });
+            
+            if (compoundKey) {
+                const compound = commonCompounds[compoundKey];
+                return {
+                    success: true,
+                    message: `✅ 可以组成化合物！`,
+                    details: {
+                        formula: formula,
+                        name: compound.name,
+                        valences: compound.valences,
+                        elements: elements,
+                        isCommon: true
+                    }
+                };
+            }
+
+            // 智能化合价匹配
+            const valenceResult = matchValences(elements);
+            if (valenceResult.success) {
+                return {
+                    success: true,
+                    message: `✅ 可以组成化合物！`,
+                    details: {
+                        ...valenceResult,
+                        elements: elements
+                    }
+                };
+            }
+
+            // 提供建议
+            const suggestions = generateSuggestions(elements);
+            return {
+                success: false,
+                message: `❌ 无法组成稳定化合物`,
+                details: { suggestions: suggestions }
+            };
+        }
+
+        // 化合价匹配
+        function matchValences(elements) {
+            const elementValences = {};
+            Object.keys(elements).forEach(element => {
+                if (elementsData[element] && elementsData[element].valences) {
+                    elementValences[element] = elementsData[element].valences;
+                }
+            });
+
+            if (Object.keys(elementValences).length === 0) {
+                return { success: false };
+            }
+
+            // 尝试找到化合价平衡的组合
+            const combinations = generateValenceCombinations(elementValences);
+            
+            for (const combination of combinations) {
+                const balance = calculateValenceBalance(elements, combination);
+                if (balance === 0) {
+                    const formula = generateFormula(elements);
+                    return {
+                        success: true,
+                        formula: formula,
+                        name: getCompoundName(formula, elements),
+                        valences: combination
+                    };
+                }
+            }
+            
+            return { success: false };
+        }
+
+        // 生成化合价组合
+        function generateValenceCombinations(elementValences) {
+            const combinations = [];
+            const elements = Object.keys(elementValences);
+            
+            function backtrack(index, current) {
+                if (index === elements.length) {
+                    combinations.push({...current});
+                    return;
+                }
+                
+                const element = elements[index];
+                for (const valence of elementValences[element]) {
+                    current[element] = valence;
+                    backtrack(index + 1, current);
+                }
+            }
+            
+            backtrack(0, {});
+            return combinations;
+        }
+
+        // 计算化合价平衡
+        function calculateValenceBalance(elements, valences) {
+            let total = 0;
+            Object.entries(elements).forEach(([element, count]) => {
+                if (valences[element] !== undefined) {
+                    total += valences[element] * count;
+                }
+            });
+            return total;
+        }
+
+        // 获取化合物名称（符合化学命名规范）
+        function getCompoundName(formula, elements) {
+            const specialNames = {
+                'H₂O': '水',
+                'H₂O₂': '过氧化氢',
+                'CO₂': '二氧化碳',
+                'CO': '一氧化碳',
+                'NaCl': '氯化钠',
+                'HCl': '盐酸',
+                'NH₃': '氨',
+                'CH₄': '甲烷',
+                'CaCO₃': '碳酸钙',
+                'H₂SO₄': '硫酸',
+                'NaOH': '氢氧化钠',
+                'Na₂CO₃': '碳酸钠',
+                'SO₂': '二氧化硫',
+                'SO₃': '三氧化硫',
+                'Na₂O': '氧化钠',
+                'CaCl₂': '氯化钙',
+                'Na₂SO₄': '硫酸钠',
+                'H₂CO₃': '碳酸',
+                'NH₄Cl': '氯化铵',
+                'NH₄NO₃': '硝酸铵',
+                '(NH₄)₂SO₄': '硫酸铵'
+            };
+
+            if (specialNames[formula]) {
+                return specialNames[formula];
+            }
+
+            const elementEntries = Object.entries(elements).filter(([_, count]) => count > 0);
+            
+            if (elementEntries.length === 0) return '';
+            
+            // 氢氧化物（金属 + OH）
+            if (elementEntries.length === 2) {
+                const hasOH = elementEntries.some(([e, _]) => e === 'OH');
+                const metal = elementEntries.find(([e, _]) => ['Na', 'K', 'Ca', 'Mg', 'Ag', 'Zn', 'Ba', 'Cu', 'Hg', 'Al', 'Fe', 'Mn', 'Au', 'Pt'].includes(e));
+                
+                if (hasOH && metal) {
+                    const metalCount = elements[metal[0]];
+                    const metalName = elementsData[metal[0]].name;
+                    return `氢氧化${metalName}${metalCount > 1 ? metalCount.toSubscript() : ''}`;
+                }
+            }
+            
+            // 酸（H + 酸根）
+            if (elementEntries.length === 2) {
+                const hasH = elementEntries.some(([e, c]) => e === 'H' && c > 0);
+                const acidRoot = elementEntries.find(([e, _]) => ['OH', 'NO3', 'SO4', 'CO3'].includes(e));
+                
+                if (hasH && acidRoot && acidRoot[0] !== 'OH') {
+                    const rootName = elementsData[acidRoot[0]].name;
+                    return rootName.replace('根', '');
+                }
+            }
+            
+            // 铵盐（NH₄ + 酸根）
+            if (elementEntries.length === 2) {
+                const hasNH4 = elementEntries.some(([e, c]) => e === 'NH4' && c > 0);
+                const acidRoot = elementEntries.find(([e, _]) => ['OH', 'NO3', 'SO4', 'CO3', 'Cl'].includes(e));
+                
+                if (hasNH4 && acidRoot) {
+                    const rootName = elementsData[acidRoot[0]].name;
+                    const acidRootCount = elements[acidRoot[0]];
+                    
+                    if (acidRoot[0] === 'Cl') {
+                        return '氯化铵';
+                    }
+                    
+                    if (acidRootCount > 1) {
+                        return `${rootName.replace('根', '')}铵`;
+                    }
+                    return `${rootName.replace('根', '')}铵`;
+                }
+            }
+            
+            // 氧化物（金属 + O）
+            if (elementEntries.length === 2) {
+                const hasO = elementEntries.some(([e, c]) => e === 'O' && c > 0);
+                const metal = elementEntries.find(([e, _]) => ['Na', 'K', 'Ca', 'Mg', 'Ag', 'Zn', 'Ba', 'Cu', 'Hg', 'Al', 'Fe', 'Mn', 'Au', 'Pt'].includes(e));
+                
+                if (hasO && metal) {
+                    const oCount = elements['O'];
+                    const metalName = elementsData[metal[0]].name;
+                    if (oCount === 1) return `氧化${metalName}`;
+                    return `${oCount.toSubscript()}氧化${metalName}`;
+                }
+            }
+            
+            // 非金属氧化物（非金属 + O）
+            if (elementEntries.length === 2) {
+                const hasO = elementEntries.some(([e, c]) => e === 'O' && c > 0);
+                const nonMetal = elementEntries.find(([e, _]) => 
+                    ['C', 'N', 'S', 'P', 'Si', 'Br', 'I', 'F'].includes(e) && e !== 'O'
+                );
+                
+                if (hasO && nonMetal) {
+                    const oCount = elements['O'];
+                    const nonMetalName = elementsData[nonMetal[0]].name;
+                    if (oCount === 1) return `一氧化${nonMetalName}`;
+                    return `${oCount.toSubscript()}氧化${nonMetalName}`;
+                }
+            }
+            
+            // 盐（金属 + 酸根）
+            if (elementEntries.length === 2) {
+                const metal = elementEntries.find(([e, _]) => ['Na', 'K', 'Ca', 'Mg', 'Ag', 'Zn', 'Ba', 'Cu', 'Hg', 'Al', 'Fe', 'Mn', 'Au', 'Pt'].includes(e));
+                const acidRoot = elementEntries.find(([e, _]) => ['OH', 'NO3', 'SO4', 'CO3', 'Cl'].includes(e));
+                
+                if (metal && acidRoot) {
+                    const metalName = elementsData[metal[0]].name;
+                    const metalCount = elements[metal[0]];
+                    const rootName = elementsData[acidRoot[0]].name;
+                    const rootCount = elements[acidRoot[0]];
+                    
+                    if (acidRoot[0] === 'Cl') {
+                        return `氯化${metalName}${metalCount > 1 ? metalCount.toSubscript() : ''}`;
+                    }
+                    
+                    let result = `${rootName.replace('根', '')}${metalName}`;
+                    if (metalCount > 1) result += metalCount.toSubscript();
+                    if (rootCount > 1) result += rootCount.toSubscript();
+                    return result;
+                }
+            }
+            
+            // 默认：按元素顺序命名
+            const sortedElements = elementEntries.sort(([elem1, count1], [elem2, count2]) => {
+                const data1 = elementsData[elem1];
+                const data2 = elementsData[elem2];
+                
+                const metals = ['Na', 'K', 'Ca', 'Mg', 'Ag', 'Zn', 'Ba', 'Cu', 'Hg', 'Al', 'Fe', 'Mn', 'Au', 'Pt'];
+                const isMetal1 = metals.includes(elem1);
+                const isMetal2 = metals.includes(elem2);
+                if (isMetal1 && !isMetal2) return -1;
+                if (!isMetal1 && isMetal2) return 1;
+                
+                if (data1.electronegativity !== data2.electronegativity) {
+                    return data1.electronegativity - data2.electronegativity;
+                }
+                
+                return elem1.localeCompare(elem2);
+            });
+            
+            const names = sortedElements.map(([e, c]) => {
+                const name = elementsData[e].name;
+                return c > 1 ? c.toSubscript() + name : name;
+            });
+            
+            return names.join('') + '化合物';
+        }
+
+        // 生成建议
+        function generateSuggestions(elements) {
+            const suggestions = [];
+            const elementKeys = Object.keys(elements);
+            
+            if (elementKeys.includes('H') && elementKeys.includes('O')) {
+                suggestions.push({
+                    formula: 'H₂O',
+                    name: '水',
+                    reason: '氢氧元素组合'
+                });
+            }
+            
+            if (elementKeys.includes('N') && elementKeys.includes('H')) {
+                suggestions.push({
+                    formula: 'NH₃',
+                    name: '氨',
+                    reason: '氮氢元素组合'
+                });
+            }
+            
+            if (elementKeys.includes('C') && elementKeys.includes('O')) {
+                suggestions.push({
+                    formula: 'CO₂',
+                    name: '二氧化碳',
+                    reason: '碳氧元素组合'
+                });
+            }
+            
+            if (elementKeys.includes('Na') && elementKeys.includes('Cl')) {
+                suggestions.push({
+                    formula: 'NaCl',
+                    name: '氯化钠',
+                    reason: '钠氯元素组合'
+                });
+            }
+            
+            if (elementKeys.includes('NH4') && elementKeys.includes('Cl')) {
+                suggestions.push({
+                    formula: 'NH₄Cl',
+                    name: '氯化铵',
+                    reason: '铵根氯元素组合'
+                });
+            }
+            
+            if (elementKeys.includes('NH4') && elementKeys.includes('NO3')) {
+                suggestions.push({
+                    formula: 'NH₄NO₃',
+                    name: '硝酸铵',
+                    reason: '铵根硝酸根组合'
+                });
+            }
+            
+            if (elementKeys.includes('NH4') && elementKeys.includes('SO4')) {
+                suggestions.push({
+                    formula: '(NH₄)₂SO₄',
+                    name: '硫酸铵',
+                    reason: '铵根硫酸根组合'
+                });
+            }
+            
+            return suggestions.slice(0, 3);
+        }
+
+        // 显示结果
+        function showResult(success, message, details = {}) {
+            const resultSection = document.getElementById('resultSection');
+            const resultTitle = document.getElementById('resultTitle');
+            const resultContent = document.getElementById('resultContent');
+            
+            resultSection.style.display = 'block';
+            resultSection.className = success ? 'result-section' : 'result-section error';
+            
+            resultTitle.className = success ? 'result-title result-success' : 'result-title result-error';
+            resultTitle.innerHTML = success ? '✅ 检验成功' : '❌ 检验失败';
+            
+            let content = `<p>${message}</p>`;
+            
+            if (success && details) {
+                if (details.formula) {
+                    content += `<div class="formula-display">${details.formula}</div>`;
+                }
+                if (details.name) {
+                    content += `<p><strong>化合物名称：</strong>${details.name}</p>`;
+                }
+                if (details.valences) {
+                    content += '<p><strong>化合价：</strong></p><div class="valence-list">';
+                    Object.entries(details.valences).forEach(([element, valence]) => {
+                        content += `<span class="valence-item">${element}: ${valence > 0 ? '+' : ''}${valence}</span>`;
+                    });
+                    content += '</div>';
+                    
+                    const balance = calculateValenceBalance(details.elements || {}, details.valences);
+                    content += `<p><strong>化合价验证：</strong> ${balance === 0 ? '✓ 化合价平衡' : '✗ 化合价不平衡'}</p>`;
+                }
+            } else if (details.suggestions) {
+                content += '<div class="suggestions">';
+                content += '<div class="suggestions-title">推荐化合物：</div>';
+                details.suggestions.forEach(suggestion => {
+                    content += `<div class="suggestion-item">
+                        <strong>${suggestion.formula}</strong> - ${suggestion.name} (${suggestion.reason})
+                    </div>`;
+                });
+                content += '</div>';
+            }
+            
+            resultContent.innerHTML = content;
+        }
+
+        // 初始化
+        init();
+        
+        // 加载并应用深色模式设置
+        document.addEventListener('DOMContentLoaded', function() {
+            const SETTINGS_KEY = 'chemistry_settings';
+            const savedSettings = localStorage.getItem(SETTINGS_KEY);
+            
+            if (savedSettings) {
+                const settings = JSON.parse(savedSettings);
+                if (settings.darkMode) {
+                    document.body.style.background = '#1a1a2a';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

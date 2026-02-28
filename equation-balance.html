@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>方程式检验 - 化学学习助手</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            transition: background 0.3s ease;
+        }
+        
+        body.dark-mode {
+            background: linear-gradient(135deg, #0d1521 0%, #1a2a3a 50%, #0d1521 100%);
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        body.dark-mode .container {
+            background: linear-gradient(145deg, #152238 0%, #1a2d48 50%, #152238 100%);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), 0 0 100px rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        
+        .page-header {
+            display: flex;
+            align-items: center;
+            padding: 20px 30px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-bottom: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        
+        body.dark-mode .page-header {
+            background: linear-gradient(135deg, #1e3a5f 0%, #1e293b 100%);
+            border-bottom-color: rgba(59, 130, 246, 0.2);
+        }
+        
+        .back-btn {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border: 1px solid #e2e8f0;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            margin-right: 20px;
+            text-decoration: none;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 500;
+        }
+        
+        body.dark-mode .back-btn {
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            border-color: rgba(59, 130, 246, 0.3);
+            text-shadow: 0 0 20px rgba(96, 165, 250, 0.3);
+        }
+        
+        .back-btn:hover {
+            background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        body.dark-mode .back-btn:hover {
+            background: linear-gradient(135deg, #93c5fd 0%, #c4b5fd 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .page-title {
+            font-size: 22px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            transition: all 0.3s ease;
+        }
+        
+        body.dark-mode .page-title {
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(96, 165, 250, 0.3);
+        }
+        
+        .content {
+            padding: 25px 35px;
+        }
+        
+        .input-section {
+            margin-bottom: 25px;
+        }
+        
+        .equation-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .equation-side {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .side-label {
+            display: block;
+            font-weight: 600;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        body.dark-mode .side-label {
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 20px rgba(96, 165, 250, 0.3);
+        }
+        
+        .equals-sign {
+            font-size: 36px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            padding: 0 15px;
+            flex-shrink: 0;
+            text-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+        }
+        
+        body.dark-mode .equals-sign {
+            text-shadow: 0 0 30px rgba(96, 165, 250, 0.4);
+        }
+        
+        .equation-input {
+            width: 100%;
+            padding: 18px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            font-size: 17px;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            color: #1e293b;
+            min-height: 55px;
+        }
+        
+        body.dark-mode .equation-input {
+            background: linear-gradient(135deg, #1e3a5f 0%, #1e293b 100%);
+            border-color: rgba(59, 130, 246, 0.2);
+            color: #e2e8f0;
+        }
+        
+        .equation-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+        }
+        
+        body.dark-mode .equation-input:focus {
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.2);
+        }
+        
+        .equation-input.drag-over {
+            border-color: #3b82f6;
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+        }
+        
+        body.dark-mode .equation-input.drag-over {
+            background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+            border-color: #60a5fa;
+        }
+        
+        body.dark-mode .equation-input.drag-over {
+            border-color: #4a90e2;
+            background: #2d3d4a;
+        }
+        
+        .input-hint {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #7f8c8d;
+            transition: color 0.3s ease;
+        }
+        
+        body.dark-mode .input-hint {
+            color: #a0a0a0;
+        }
+        
+        .quick-equations {
+            margin-top: 20px;
+        }
+        
+        .quick-equations-title {
+            font-weight: 600;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        body.dark-mode .quick-equations-title {
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 20px rgba(96, 165, 250, 0.3);
+        }
+        
+        .substance-category {
+            margin-bottom: 25px;
+        }
+        
+        .category-title {
+            font-weight: 600;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+        
+        body.dark-mode .category-title {
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .substance-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
+        }
+        
+        .substance-item {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 1px solid #e2e8f0;
+            padding: 12px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            user-select: none;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .substance-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .substance-item:hover::before {
+            opacity: 1;
+        }
+        
+        .substance-item:hover {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+            border-color: #3b82f6;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.35);
+        }
+        
+        body.dark-mode .substance-item {
+            background: linear-gradient(135deg, #1e3a5f 0%, #1e293b 100%);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            color: #e2e8f0;
+        }
+        
+        body.dark-mode .substance-item:hover {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #1e3a8a 100%);
+            border-color: #60a5fa;
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+        }
+        
+        .substance-item:active {
+            transform: translateY(0);
+        }
+        
+        /* 按钮样式 */
+        .action-btn {
+            width: 100%;
+            padding: 18px 30px;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 25px;
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.35);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .action-btn:hover::before {
+            opacity: 1;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(59, 130, 246, 0.45);
+        }
+        
+        .action-btn:active {
+            transform: translateY(0) scale(0.98);
+        }
+        
+        body.dark-mode .action-btn {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #1e3a8a 100%);
+            box-shadow: 0 8px 25px rgba(30, 64, 175, 0.4), inset 0 1px 0 rgba(255,255,255,0.15);
+        }
+        
+        body.dark-mode .action-btn:hover {
+            box-shadow: 0 15px 40px rgba(59, 130, 246, 0.5), 0 0 30px rgba(59, 130, 246, 0.2);
+        }
+        
+        /* 结果显示 */
+        .result-section {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 16px;
+            padding: 25px;
+            border-left: 4px solid #10b981;
+            transition: all 0.3s ease;
+        }
+        
+        body.dark-mode .result-section {
+            background: linear-gradient(135deg, #1e3a5f 0%, #1e293b 100%);
+            border-left-color: #10b981;
+        }
+        
+        .result-section.error {
+            border-left-color: #ef4444;
+        }
+        
+        body.dark-mode .result-section.error {
+            border-left-color: #ef4444;
+        }
+        
+        .result-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .result-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        body.dark-mode .result-success {
+            background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 20px rgba(52, 211, 153, 0.3);
+        }
+        
+        .result-error {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        body.dark-mode .result-error {
+            background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 20px rgba(248, 113, 113, 0.3);
+        }
+        
+        .result-content {
+            line-height: 1.7;
+        }
+        
+        .balanced-equation {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            border: 2px solid #c3e6cb;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            border-radius: 12px;
+        }
+        
+        .coefficient {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: bold;
+        }
+        
+        body.dark-mode .coefficient {
+            text-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+        }
+        
+        .element-balance {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            padding: 15px;
+            border-radius: 12px;
+            margin: 15px 0;
+            border: 1px solid #e2e8f0;
+        }
+        
+        body.dark-mode .element-balance {
+            background: linear-gradient(135deg, #1e3a5f 0%, #1e293b 100%);
+            border-color: rgba(59, 130, 246, 0.2);
+        }
+        
+        .element-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        
+        body.dark-mode .element-row {
+            border-bottom-color: rgba(59, 130, 246, 0.15);
+        }
+        
+        .element-row:last-child {
+            border-bottom: none;
+        }
+        
+        .element-row:hover {
+            background: rgba(59, 130, 246, 0.05);
+            margin: 0 -15px;
+            padding-left: 15px;
+            padding-right: 15px;
+            border-radius: 6px;
+        }
+        
+        body.dark-mode .element-row:hover {
+            background: rgba(59, 130, 246, 0.1);
+        }
+        
+        .element-name {
+            font-weight: 600;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        body.dark-mode .element-name {
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .element-count {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: bold;
+        }
+        
+        body.dark-mode .element-count {
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 15px rgba(96, 165, 250, 0.3);
+        }
+        
+        .balance-status {
+            text-align: center;
+            padding: 12px;
+            font-weight: 600;
+            border-radius: 10px;
+            margin-top: 12px;
+            font-size: 14px;
+        }
+        
+        .balance-status.balanced {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            color: #065f46;
+        }
+        
+        body.dark-mode .balance-status.balanced {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+        }
+        
+        .balance-status.unbalanced {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            color: #991b1b;
+        }
+        
+        body.dark-mode .balance-status.unbalanced {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+        }
+        
+        .suggestions {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        body.dark-mode .suggestions {
+            border-top-color: rgba(59, 130, 246, 0.15);
+        }
+        
+        .suggestions-title {
+            font-weight: 600;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+        }
+        
+        body.dark-mode .suggestions-title {
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .suggestion-item {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        body.dark-mode .suggestion-item {
+            background: linear-gradient(135deg, #1e3a5f 0%, #1e293b 100%);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            color: #e2e8f0;
+        }
+        
+        .suggestion-item:hover {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+            border-color: #3b82f6;
+            transform: translateX(5px);
+        }
+        
+        .suggestion-item:hover {
+            background: #e9ecef;
+            border-color: #667eea;
+        }
+        
+        .syntax-errors {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-left: 4px solid #f59e0b;
+            border-radius: 12px;
+            padding: 18px;
+            margin: 18px 0;
+            transition: all 0.3s ease;
+        }
+        
+        body.dark-mode .syntax-errors {
+            background: linear-gradient(135deg, #1e3a5f 0%, #1e293b 100%);
+            border-left-color: #f59e0b;
+        }
+        
+        .syntax-errors-title {
+            font-weight: 600;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        body.dark-mode .syntax-errors-title {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .syntax-error-item {
+            color: #92400e;
+            padding: 6px 0;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        
+        body.dark-mode .syntax-error-item {
+            color: #fcd34d;
+        }
+        
+        .canceled-info {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-left: 4px solid #3b82f6;
+            border-radius: 12px;
+            padding: 18px;
+            margin: 18px 0;
+            transition: all 0.3s ease;
+        }
+        
+        body.dark-mode .canceled-info {
+            background: linear-gradient(135deg, #1e3a5f 0%, #1e293b 100%);
+            border-left-color: #60a5fa;
+        }
+        
+        .canceled-title {
+            font-weight: 600;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        body.dark-mode .canceled-title {
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .canceled-item {
+            color: #1e40af;
+            padding: 6px 0;
+            font-family: 'Courier New', monospace;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        body.dark-mode .canceled-item {
+            color: #93c5fd;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+            
+            .content {
+                padding: 15px 20px;
+            }
+            
+            .quick-equation-btn {
+                display: block;
+                margin: 5px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <a href="index.html" class="back-btn">← 返回首页</a>
+            <div class="page-title">方程式检验</div>
+        </div>
+        
+        <div class="content">
+            <div class="input-section">
+                <div class="equation-container">
+                    <div class="equation-side">
+                        <label class="side-label">反应物</label>
+                        <input type="text" class="equation-input" id="reactantsInput" placeholder="拖拽物质到此处或直接输入">
+                    </div>
+                    <div class="equals-sign">=</div>
+                    <div class="equation-side">
+                        <label class="side-label">生成物</label>
+                        <input type="text" class="equation-input" id="productsInput" placeholder="拖拽物质到此处或直接输入">
+                    </div>
+                </div>
+                <div class="input-hint">
+                    提示：拖拽下方物质到反应物或生成物框中，第一个物质前面不加"+"号，相同物质会自动整合
+                </div>
+                
+                <div class="quick-equations">
+                    <div class="quick-equations-title">常用物质（可拖拽）：</div>
+                    
+                    <!-- 气体 -->
+                    <div class="substance-category">
+                        <div class="category-title">气体</div>
+                        <div class="substance-list">
+                            <div class="substance-item" draggable="true" data-target="reactants" onclick="setEquation('H2O')">H₂O（水蒸气）</div>
+                            <div class="substance-item" draggable="true" data-target="reactants" onclick="setEquation('CO2')">CO₂（二氧化碳）</div>
+                            <div class="substance-item" draggable="true" data-target="reactants" onclick="setEquation('NH3')">NH₃（氨）</div>
+                            <div class="substance-item" draggable="true" data-target="reactants" onclick="setEquation('Cl2')">Cl₂（氯气）</div>
+                            <div class="substance-item" draggable="true" data-target="reactants" onclick="setEquation('O2')">O₂（氧气）</div>
+                            <div class="substance-item" draggable="true" data-target="reactants" onclick="setEquation('H2')">H₂（氢气）</div>
+                        </div>
+                    </div>
+                    
+                    <!-- 液体 -->
+                    <div class="substance-category">
+                        <div class="category-title">液体</div>
+                        <div class="substance-list">
+                            <div class="substance-item" draggable="true" data-target="reactants" onclick="setEquation('H2O')">H₂O（水）</div>
+                            <div class="substance-item" draggable="true" data-target="reactants" onclick="setEquation('H2SO4')">H₂SO₄（硫酸）</div>
+                        </div>
+                    </div>
+                    
+                    <!-- 固体 -->
+                    <div class="substance-category">
+                        <div class="category-title">固体</div>
+                        <div class="substance-list">
+                            <div class="substance-item" draggable="true" data-target="reactants" onclick="setEquation('C')">C（碳）</div>
+                            <div class="substance-item" draggable="true" data-target="reactants" onclick="setEquation('Na')">Na（钠）</div>
+                            <div class="substance-item" draggable="true" data-target="reactants" onclick="setEquation('CaCO3')">CaCO₃（碳酸钙）</div>
+                            <div class="substance-item" draggable="true" data-target="reactants" onclick="setEquation('NaCl')">NaCl（氯化钠）</div>
+                            <div class="substance-item" draggable="true" data-target="reactants" onclick="setEquation('CaO')">CaO（氧化钙）</div>
+                            <div class="substance-item" draggable="true" data-target="reactants" onclick="setEquation('Zn')">Zn（锌）</div>
+                            <div class="substance-item" draggable="true" data-target="reactants" onclick="setEquation('Fe')">Fe（铁）</div>
+                            <div class="substance-item" draggable="true" data-target="reactants" onclick="setEquation('Cu')">Cu（铜）</div>
+                        </div>
+                    </div>
+                    
+                    <!-- 状态标记 -->
+                    <div class="substance-category">
+                        <div class="category-title">状态标记（点击添加）</div>
+                        <div class="substance-list">
+                            <div class="substance-item" onclick="addStateMark('↑')">↑（气体）</div>
+                            <div class="substance-item" onclick="addStateMark('↓')">↓（沉淀）</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="action-btn" onclick="balanceEquation()">配平检验</button>
+            
+            <div class="result-section" id="resultSection" style="display: none;">
+                <div class="result-title" id="resultTitle"></div>
+                <div class="result-content" id="resultContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 元素原子量
+        const atomicWeights = {
+            'H': 1, 'O': 16, 'C': 12, 'N': 14, 'Na': 23, 'K': 39,
+            'Ca': 40, 'Mg': 24, 'Cl': 35.5, 'S': 32, 'P': 31,
+            'Fe': 56, 'Cu': 64, 'Zn': 65, 'Al': 27, 'Si': 28
+        };
+
+        // 添加状态标记
+        function addStateMark(mark) {
+            const reactantsInput = document.getElementById('reactantsInput');
+            const productsInput = document.getElementById('productsInput');
+            const activeElement = document.activeElement;
+            
+            if (activeElement === reactantsInput || activeElement === productsInput) {
+                const currentValue = activeElement.value.trim();
+                if (currentValue) {
+                    activeElement.value = currentValue + mark;
+                }
+            } else {
+                const currentValue = productsInput.value.trim();
+                if (currentValue) {
+                    productsInput.value = currentValue + mark;
+                }
+            }
+        }
+        
+        // 检查括号和上下标
+        function checkFormulaSyntax(formula) {
+            const errors = [];
+            
+            let openParentheses = 0;
+            for (let i = 0; i < formula.length; i++) {
+                if (formula[i] === '(') {
+                    openParentheses++;
+                } else if (formula[i] === ')') {
+                    if (openParentheses === 0) {
+                        errors.push('括号不匹配：多余的右括号');
+                    }
+                    openParentheses--;
+                }
+            }
+            
+            if (openParentheses > 0) {
+                errors.push('括号不匹配：缺少右括号');
+            }
+            
+            return errors;
+        }
+        
+        // 设置方程式
+        function setEquation(equation) {
+            const reactantsInput = document.getElementById('reactantsInput');
+            const productsInput = document.getElementById('productsInput');
+            const activeElement = document.activeElement;
+            
+            if (activeElement === reactantsInput) {
+                const currentValue = reactantsInput.value.trim();
+                if (currentValue) {
+                    reactantsInput.value = currentValue + ' + ' + equation;
+                } else {
+                    reactantsInput.value = equation;
+                }
+            } else if (activeElement === productsInput) {
+                const currentValue = productsInput.value.trim();
+                if (currentValue) {
+                    productsInput.value = currentValue + ' + ' + equation;
+                } else {
+                    productsInput.value = equation;
+                }
+            } else {
+                const currentValue = reactantsInput.value.trim();
+                if (currentValue) {
+                    reactantsInput.value = currentValue + ' + ' + equation;
+                } else {
+                    reactantsInput.value = equation;
+                }
+            }
+        }
+        
+        // 将化学式中的数字转换为下标
+        function toSubscript(formula) {
+            const subscriptMap = {
+                '0': '₀', '1': '₁', '2': '₂', '3': '₃', '4': '₄',
+                '5': '₅', '6': '₆', '7': '₇', '8': '₈', '9': '₉'
+            };
+            return formula.replace(/\d/g, match => subscriptMap[match] || match);
+        }
+        
+        // 将下标转换回普通数字
+        function fromSubscript(formula) {
+            const subscriptMap = {
+                '₀': '0', '₁': '1', '₂': '2', '₃': '3', '₄': '4',
+                '₅': '5', '₆': '6', '₇': '7', '₈': '8', '₉': '9'
+            };
+            return formula.replace(/[₀-₉]/g, match => subscriptMap[match] || match);
+        }
+        
+        // 整合相同物质
+        function consolidateSubstances(input, useSubscript = true) {
+            if (!input.trim()) return input;
+            
+            const substances = input.split('+').map(s => s.trim()).filter(s => s);
+            const substanceCount = {};
+            
+            substances.forEach(substance => {
+                const match = substance.match(/^(\d+)?([A-Za-z0-9₀-₉]+)$/);
+                if (match) {
+                    const coefficient = match[1] ? parseInt(match[1]) : 1;
+                    let formula = match[2];
+                    // 如果需要显示下标，转换数字
+                    if (useSubscript) {
+                        formula = toSubscript(fromSubscript(formula));
+                    }
+                    substanceCount[formula] = (substanceCount[formula] || 0) + coefficient;
+                } else {
+                    let formula = substance;
+                    if (useSubscript) {
+                        formula = toSubscript(fromSubscript(formula));
+                    }
+                    substanceCount[formula] = (substanceCount[formula] || 0) + 1;
+                }
+            });
+            
+            const result = [];
+            Object.entries(substanceCount).forEach(([formula, count]) => {
+                if (count === 1) {
+                    result.push(formula);
+                } else {
+                    // 系数也需要转换为下标
+                    const subscriptCoefficient = useSubscript ? toSubscript(String(count)) : String(count);
+                    result.push(subscriptCoefficient + formula);
+                }
+            });
+            
+            return result.join(' + ');
+        }
+        
+        // 初始化拖拽功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const reactantsInput = document.getElementById('reactantsInput');
+            const productsInput = document.getElementById('productsInput');
+            const substanceItems = document.querySelectorAll('.substance-item');
+            
+            substanceItems.forEach(item => {
+                item.addEventListener('dragstart', function(e) {
+                    const formula = this.getAttribute('onclick').match(/'([^']+)'/)[1];
+                    e.dataTransfer.setData('text/plain', formula);
+                    e.dataTransfer.setData('target', this.dataset.target || 'reactants');
+                });
+            });
+            
+            [reactantsInput, productsInput].forEach(input => {
+                input.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    this.classList.add('drag-over');
+                });
+                
+                input.addEventListener('dragleave', function(e) {
+                    this.classList.remove('drag-over');
+                });
+                
+                input.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    this.classList.remove('drag-over');
+                    const data = e.dataTransfer.getData('text/plain');
+                    const target = e.dataTransfer.getData('target') || 'reactants';
+                    
+                    // 根据drop目标确定要添加到哪个输入框
+                    if (this.id === 'productsInput') {
+                        addToInput(this, data);
+                    } else {
+                        addToInput(reactantsInput, data);
+                    }
+                });
+                
+                input.addEventListener('input', function() {
+                    this.value = consolidateSubstances(this.value);
+                    // 输入时也自动进行两边消去检查
+                    autoConsolidateAndCancel();
+                });
+            });
+        });
+        
+        // 添加物质到指定输入框
+        function addToInput(inputElement, equation) {
+            const currentValue = inputElement.value.trim();
+            if (currentValue) {
+                inputElement.value = currentValue + ' + ' + toSubscript(equation);
+            } else {
+                inputElement.value = toSubscript(equation);
+            }
+            // 添加后自动进行整合和消去检查
+            autoConsolidateAndCancel();
+        }
+        
+        // 自动整合同侧相同物质并消去两边相同物质
+        function autoConsolidateAndCancel() {
+            const reactantsInput = document.getElementById('reactantsInput');
+            const productsInput = document.getElementById('productsInput');
+            
+            let reactantsValue = reactantsInput.value.trim();
+            let productsValue = productsInput.value.trim();
+            
+            if (!reactantsValue && !productsValue) return;
+            
+            // 先整合同侧物质（用于显示）
+            const displayReactants = consolidateSubstances(reactantsValue);
+            const displayProducts = consolidateSubstances(productsValue);
+            
+            // 转换回普通数字用于解析
+            const rawReactantsValue = fromSubscript(reactantsValue);
+            const rawProductsValue = fromSubscript(productsValue);
+            
+            // 解析两边的物质
+            const reactants = parseChemicalSide(rawReactantsValue);
+            const products = parseChemicalSide(rawProductsValue);
+            
+            // 消去两边相同物质
+            const { reactants: newReactants, products: newProducts } = cancelCommonSubstances(reactants, products);
+            
+            // 重新构建两边字符串并转换为下标
+            const newReactantsValue = newReactants.map(r => toSubscript(r.formula)).join(' + ');
+            const newProductsValue = newProducts.map(p => toSubscript(p.formula)).join(' + ');
+            
+            // 更新输入框
+            reactantsInput.value = newReactantsValue;
+            productsInput.value = newProductsValue;
+        }
+
+        // 配平方程式
+        function balanceEquation() {
+            const reactantsStr = document.getElementById('reactantsInput').value.trim();
+            const productsStr = document.getElementById('productsInput').value.trim();
+            
+            if (!reactantsStr || !productsStr) {
+                showResult(false, '请输入反应物和生成物！');
+                return;
+            }
+            
+            const reactantsErrors = checkFormulaSyntax(reactantsStr);
+            const productsErrors = checkFormulaSyntax(productsStr);
+            
+            if (reactantsErrors.length > 0 || productsErrors.length > 0) {
+                const allErrors = [...reactantsErrors, ...productsErrors];
+                showResult(false, '❌ 化学式格式错误', { syntaxErrors: allErrors });
+                return;
+            }
+            
+            const equation = `${reactantsStr} = ${productsStr}`;
+            const result = parseAndBalanceEquation(equation);
+            showResult(result.success, result.message, result.details);
+        }
+
+        // 解析和配平方程式
+        function parseAndBalanceEquation(equation) {
+            try {
+                const [reactantsStr, productsStr] = equation.split('=');
+                if (!reactantsStr || !productsStr) {
+                    return { success: false, message: '方程式格式错误！请使用 = 连接反应物和生成物。' };
+                }
+
+                let reactants = parseChemicalSide(reactantsStr);
+                let products = parseChemicalSide(productsStr);
+                
+                const { reactants: newReactants, products: newProducts, canceled } = cancelCommonSubstances(reactants, products);
+                
+                if (canceled.length > 0) {
+                    const canceledStr = canceled.map(s => s.formula).join(', ');
+                    console.log(`已消去相同物质：${canceledStr}`);
+                }
+                
+                reactants = newReactants;
+                products = newProducts;
+
+                const balanceResult = calculateElementBalance(reactants, products);
+                
+                if (balanceResult.isBalanced) {
+                    return {
+                        success: true,
+                        message: '✅ 方程式已配平！',
+                        details: {
+                            reactants: reactants,
+                            products: products,
+                            elementBalance: balanceResult.elementCounts,
+                            balancedEquation: balanceResult.balancedEquation,
+                            canceled: canceled
+                        }
+                    };
+                } else {
+                    return {
+                        success: false,
+                        message: '❌ 方程式未配平',
+                        details: {
+                            reactants: reactants,
+                            products: products,
+                            elementBalance: balanceResult.elementCounts,
+                            suggestions: generateBalanceSuggestions(balanceResult.elementCounts),
+                            canceled: canceled
+                        }
+                    };
+                }
+            } catch (error) {
+                return { success: false, message: '方程式解析错误：' + error.message };
+            }
+        }
+        
+        // 消去反应物和生成物中的相同物质
+        function cancelCommonSubstances(reactants, products) {
+            // 提取化学式的核心部分（不带系数）
+            const extractCoreFormula = (formula) => {
+                return formula.replace(/^\d+/, '');
+            };
+            
+            // 构建带核心部分的列表
+            const reactantItems = reactants.map(r => ({
+                ...r,
+                coreFormula: extractCoreFormula(r.formula)
+            }));
+            
+            const productItems = products.map(p => ({
+                ...p,
+                coreFormula: extractCoreFormula(p.formula)
+            }));
+            
+            // 统计每种核心物质的数量
+            const reactantCounts = {};
+            const productCounts = {};
+            const canceled = [];
+            
+            reactantItems.forEach(r => {
+                reactantCounts[r.coreFormula] = reactantCounts[r.coreFormula] || [];
+                reactantCounts[r.coreFormula].push(r);
+            });
+            
+            productItems.forEach(p => {
+                productCounts[p.coreFormula] = productCounts[p.coreFormula] || [];
+                productCounts[p.coreFormula].push(p);
+            });
+            
+            // 消去两边相同物质
+            Object.keys(reactantCounts).forEach(coreFormula => {
+                if (productCounts[coreFormula]) {
+                    const reactantList = reactantCounts[coreFormula];
+                    const productList = productCounts[coreFormula];
+                    const cancelCount = Math.min(reactantList.length, productList.length);
+                    
+                    for (let i = 0; i < cancelCount; i++) {
+                        canceled.push({ formula: coreFormula, count: 1 });
+                    }
+                    
+                    // 移除已消去的物质
+                    reactantCounts[coreFormula] = reactantList.slice(cancelCount);
+                    productCounts[coreFormula] = productList.slice(cancelCount);
+                }
+            });
+            
+            // 构建新的反应物和生成物列表
+            const newReactants = [];
+            const newProducts = [];
+            
+            Object.values(reactantCounts).forEach(list => {
+                list.forEach(item => {
+                    newReactants.push({ formula: item.formula, elements: item.elements });
+                });
+            });
+            
+            Object.values(productCounts).forEach(list => {
+                list.forEach(item => {
+                    newProducts.push({ formula: item.formula, elements: item.elements });
+                });
+            });
+            
+            return { reactants: newReactants, products: newProducts, canceled };
+        }
+
+        // 解析化学式一侧
+        function parseChemicalSide(sideStr) {
+            const compounds = sideStr.split('+').map(s => s.trim()).filter(s => s);
+            return compounds.map(compound => parseFormula(compound));
+        }
+
+        // 解析化学式
+        function parseFormula(formula) {
+            const elements = {};
+            
+            // 首先提取系数（如果有的话）
+            const coefficientMatch = formula.match(/^(\d+)/);
+            const coefficient = coefficientMatch ? parseInt(coefficientMatch[1]) : 1;
+            
+            // 移除系数后解析元素
+            const formulaWithoutCoefficient = coefficientMatch ? formula.substring(coefficientMatch[1].length) : formula;
+            
+            // 手动解析化学式，避免正则表达式的全局标志问题
+            let i = 0;
+            while (i < formulaWithoutCoefficient.length) {
+                // 检查是否是大写字母（元素符号的开始）
+                if (/[A-Z]/.test(formulaWithoutCoefficient[i])) {
+                    // 获取元素符号（大写字母 + 可选的小写字母）
+                    let element = formulaWithoutCoefficient[i];
+                    i++;
+                    
+                    // 检查后面是否有小写字母
+                    while (i < formulaWithoutCoefficient.length && /[a-z]/.test(formulaWithoutCoefficient[i])) {
+                        element += formulaWithoutCoefficient[i];
+                        i++;
+                    }
+                    
+                    // 获取元素数量
+                    let countStr = '';
+                    while (i < formulaWithoutCoefficient.length && /\d/.test(formulaWithoutCoefficient[i])) {
+                        countStr += formulaWithoutCoefficient[i];
+                        i++;
+                    }
+                    
+                    const count = countStr.length > 0 ? parseInt(countStr) : 1;
+                    elements[element] = (elements[element] || 0) + count * coefficient;
+                } else {
+                    // 跳过非元素字符
+                    i++;
+                }
+            }
+            
+            return { formula, elements };
+        }
+
+        // 计算元素平衡
+        function calculateElementBalance(reactants, products) {
+            const reactantElements = {};
+            const productElements = {};
+            
+            // 计算反应物元素总数
+            reactants.forEach(({ elements }) => {
+                Object.entries(elements).forEach(([element, count]) => {
+                    reactantElements[element] = (reactantElements[element] || 0) + count;
+                });
+            });
+            
+            // 计算生成物元素总数
+            products.forEach(({ elements }) => {
+                Object.entries(elements).forEach(([element, count]) => {
+                    productElements[element] = (productElements[element] || 0) + count;
+                });
+            });
+            
+            // 检查是否平衡
+            const allElements = new Set([...Object.keys(reactantElements), ...Object.keys(productElements)]);
+            let isBalanced = true;
+            const elementCounts = {};
+            
+            allElements.forEach(element => {
+                const reactantCount = reactantElements[element] || 0;
+                const productCount = productElements[element] || 0;
+                elementCounts[element] = {
+                    reactant: reactantCount,
+                    product: productCount,
+                    balanced: reactantCount === productCount
+                };
+                
+                if (reactantCount !== productCount) {
+                    isBalanced = false;
+                }
+            });
+            
+            // 生成配平后的方程式
+            const balancedEquation = isBalanced ? generateBalancedEquation(reactants, products) : null;
+            
+            return {
+                isBalanced,
+                elementCounts,
+                balancedEquation
+            };
+        }
+
+        // 生成配平后的方程式
+        function generateBalancedEquation(reactants, products) {
+            const reactantStr = reactants.map(r => r.formula).join(' + ');
+            const productStr = products.map(p => p.formula).join(' + ');
+            return `${reactantStr} = ${productStr}`;
+        }
+
+        // 生成配平建议
+        function generateBalanceSuggestions(elementCounts) {
+            const suggestions = [];
+            
+            // 找出不平衡的元素
+            const unbalancedElements = Object.entries(elementCounts)
+                .filter(([_, counts]) => !counts.balanced)
+                .map(([element, counts]) => ({ element, ...counts }));
+            
+            if (unbalancedElements.length === 0) return suggestions;
+            
+            // 生成建议
+            unbalancedElements.forEach(({ element, reactant, product }) => {
+                if (reactant < product) {
+                    suggestions.push(`反应物中${element}不足，建议增加${element}的原子数`);
+                } else {
+                    suggestions.push(`生成物中${element}不足，建议增加${element}的原子数`);
+                }
+            });
+            
+            return suggestions;
+        }
+
+        // 显示结果
+        function showResult(success, message, details = {}) {
+            const resultSection = document.getElementById('resultSection');
+            const resultTitle = document.getElementById('resultTitle');
+            const resultContent = document.getElementById('resultContent');
+            
+            resultSection.style.display = 'block';
+            resultSection.className = success ? 'result-section' : 'result-section error';
+            
+            resultTitle.className = success ? 'result-title result-success' : 'result-title result-error';
+            resultTitle.innerHTML = success ? '✅ 配平成功' : '❌ 配平失败';
+            
+            let content = `<p>${message}</p>`;
+            
+            if (details.syntaxErrors && details.syntaxErrors.length > 0) {
+                content += '<div class="syntax-errors">';
+                content += '<div class="syntax-errors-title">语法错误：</div>';
+                details.syntaxErrors.forEach(error => {
+                    content += `<div class="syntax-error-item">• ${error}</div>`;
+                });
+                content += '</div>';
+            }
+            
+            if (success && details.balancedEquation) {
+                content += `<div class="balanced-equation">${toSubscript(details.balancedEquation)}</div>`;
+            }
+            
+            if (details.canceled && details.canceled.length > 0) {
+                content += '<div class="canceled-info">';
+                content += '<div class="canceled-title">已消去的相同物质：</div>';
+                details.canceled.forEach(item => {
+                    content += `<div class="canceled-item">${toSubscript(item.formula)}</div>`;
+                });
+                content += '</div>';
+            }
+            
+            if (details.elementBalance) {
+                content += '<div class="element-balance">';
+                content += '<div class="element-row"><strong>元素</strong><strong>反应物</strong><strong>生成物</strong><strong>状态</strong></div>';
+                
+                Object.entries(details.elementBalance).forEach(([element, counts]) => {
+                    const statusIcon = counts.balanced ? '✓' : '✗';
+                    const statusClass = counts.balanced ? 'balanced' : 'unbalanced';
+                    content += `<div class="element-row">
+                        <span class="element-name">${element}</span>
+                        <span class="element-count">${counts.reactant}</span>
+                        <span class="element-count">${counts.product}</span>
+                        <span class="balance-status ${statusClass}">${statusIcon}</span>
+                    </div>`;
+                });
+                
+                content += '</div>';
+            }
+            
+            if (details.suggestions && details.suggestions.length > 0) {
+                content += '<div class="suggestions">';
+                content += '<div class="suggestions-title">配平建议：</div>';
+                details.suggestions.forEach(suggestion => {
+                    content += `<div class="suggestion-item">${suggestion}</div>`;
+                });
+                content += '</div>';
+            }
+            
+            resultContent.innerHTML = content;
+        }
+
+        // 回车键提交
+        document.getElementById('reactantsInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                balanceEquation();
+            }
+        });
+        
+        document.getElementById('productsInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                balanceEquation();
+            }
+        });
+        
+        // 加载并应用深色模式设置
+        document.addEventListener('DOMContentLoaded', function() {
+            const SETTINGS_KEY = 'chemistry_settings';
+            const savedSettings = localStorage.getItem(SETTINGS_KEY);
+            
+            if (savedSettings) {
+                const settings = JSON.parse(savedSettings);
+                if (settings.darkMode) {
+                    document.body.classList.add('dark-mode');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
